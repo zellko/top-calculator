@@ -8,6 +8,7 @@ body {
     flex-direction: column;
     height: 100vh;
     background-color: #D3E0EA;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 
@@ -68,7 +69,10 @@ CALCULATOR
 
 .display-1 {}
 
-.display-2 {}
+.display-2 {
+    font-weight: 900;
+    font-size: 22px;
+}
 
 .keypad {
     display: flex;
@@ -101,13 +105,24 @@ button:hover {
 }
 
 #equal {
-    background-color: #1687A7;
-    color: #D3E0EA;
+    background-color: #A3DA8D;
+    color: #276678;
 }
 
 #equal:hover {
-    background-color: #276678;
+    background-color: #146356;
     color: #D3E0EA;
+}
+
+.clear,
+.backspace {
+    background-color: #FF6767;
+}
+
+.clear:hover,
+.backspace:hover {
+    background-color: #FF3D68;
+    color: #276678;
 }
 
 
