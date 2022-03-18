@@ -12,7 +12,7 @@ let operandToModify = 0; // Variable to define if it's the first operand or the 
 let operand = ["", ""]; // Variable to store the two operands
 let operator = ""; // Variable to store the choosen operator
 let result = undefined;
-
+// let displayResult = "";
 
 // ************************
 // MATH OPERATION
@@ -35,7 +35,27 @@ function subtract(foperand) {
 };
 
 // ************************
-// Operate
+// NUMBER ROUNDING, CLEANING
+// ************************
+
+function roundNumber(n) {
+    let numberRounded = "";
+    let nToString = String(n);
+
+    console.log(n)
+
+    if (n >= 1e+21) return String(n);
+    if (n >= 1000000000) return `${Math.round((n/10**(nToString.length-1)) * 100) / 100}e${nToString.length-1}`;
+    if (n <= -1000000000) return `${Math.round((n/10**(nToString.length-1)) * 100) / 100}e${nToString.length-1}`;
+    if (n <= 0.000001) return `${Math.round(n * 10 ** Number(nToString.split("-")[1]) * 100) / 100}e-${nToString.split("-")[1]}`;
+    if ((nToString.length > 3) && nToString.includes(".")) return Math.round(n * 100000) / 100000;
+    numberRounded = String(n);
+
+    return numberRounded;
+};
+
+// ************************
+// OPERATION
 // ************************
 
 function opeOperate(e) {
@@ -45,10 +65,9 @@ function opeOperate(e) {
 
     // If user press an operator and the second operand is empty... 
     if (operand[1] === "") {
-        console.log("operand 2 is empty");
         operator = this.id; // ...store the operator 
         operandToModify = 1; // ...change the operand to modify
-        displayOperation.textContent = `${Number(operand[0])} ${operator}`; // Display the first number and operator on the top screen
+        displayOperation.textContent = `${roundNumber(Number(operand[0]))} ${operator}`; // Display the first number and operator on the top screen
         displayOperand.textContent = ""; // Clear bottom screen
         return
     };
@@ -74,24 +93,22 @@ function opeOperate(e) {
         result = subtract(operand);
     };
 
+    console.log(result);
+    console.log(typeof(result));
+
     operand[0] = String(result);
     operand[1] = "";
     operandToModify = 1; // ...change the operand to modify
     operator = this.id; // ...store the operator 
 
-
-    displayOperation.textContent = `${Number(operand[0])} ${operator}`; // Display the first number and operator on the top screen
-    displayOperand.textContent = `${Number(operand[0])}`; // Display the first number and operator on the top screen
+    displayOperation.textContent = `${roundNumber(result)} ${operator}`; // Display the first number and operator on the top screen
+    displayOperand.textContent = `${roundNumber(result)}`; // Display the first number and operator on the top screen
 };
 
 function equOperate(e) {
 
     // Exceptions
-    if (operand[0] === "" || operand[1] === "" || operator === "") {
-        console.log("one of the param is not defined");
-        return;
-    };
-
+    if (operand[0] === "" || operand[1] === "" || operator === "") return;
 
     if (operator === "%") {
         if (Number(operand[1]) === 0) {
@@ -114,8 +131,9 @@ function equOperate(e) {
         result = subtract(operand);
     };
 
-    displayOperation.textContent = `${Number(operand[0])} ${operator} ${Number(operand[1])} =`; // Display the first number and operator on the top screen
-    displayOperand.textContent = `${Number(result)}`; // Display the first number and operator on the top screen
+    displayOperation.textContent = `${roundNumber(Number(operand[0]))} ${operator} ${roundNumber(Number(operand[1]))} =`; // Display the first number and operator on the top screen
+    displayOperand.textContent = `${roundNumber(result)}`; // Display the first number and operator on the top screen
+
     operand[0] = String(result);
     operand[1] = "";
     operandToModify = 0; // ...change the operand to modify
@@ -128,19 +146,17 @@ function equOperate(e) {
 function modifyOperandNumber(e) {
     //Function to modify the operand when the user click on a number
 
-    // Exceptions
-    //if (((operand[operandToModify]) === "") && (this.id === "0")) return; // If user press "0" and operand is empty, input is ignored
-    if (operand[operandToModify].length > 14) return; // If the length is > 14, ignore the input (operator too big)
-
     if ((operandToModify === 0) && (Number(operand[0]) === result)) {
         displayOperation.textContent = "";
         operand[0] = "";
     };
 
+    // Exceptions
+    //if (((operand[operandToModify]) === "") && (this.id === "0")) return; // If user press "0" and operand is empty, input is ignored
+    if (operand[operandToModify].length > 20) return; // If the length is > 14, ignore the input (operator too big)
+
     operand[operandToModify] += this.id; // Add the number to the operation variable at the position 1(first operand) or 2 second operand)
     displayOperand.textContent = operand[operandToModify]; // Disply the number on the screen
-
-    console.log(operand);
 };
 
 function modifyOperandPoint() {
@@ -151,7 +167,6 @@ function modifyOperandPoint() {
 
     operand[operandToModify] += ".";
     displayOperand.textContent = operand[operandToModify];
-    console.log(operand);
 };
 
 function modifyOperandSymbole() {
@@ -161,7 +176,6 @@ function modifyOperandSymbole() {
         operand[operandToModify] = `-${operand[operandToModify]}`;
 
     displayOperand.textContent = operand[operandToModify];
-    console.log(operand);
 };
 
 // ************************
@@ -170,9 +184,22 @@ function modifyOperandSymbole() {
 
 function removeLastEntry() {
     // Function to remove the last entry
+
+    if (operandToModify === 1 && operand[operandToModify] === "") {
+        operator = "";
+        operandToModify = 0;
+        displayOperation.textContent = "";
+        displayOperand.textContent = operand[operandToModify];
+        return;
+    };
+
+    if ((operandToModify === 0) && (Number(operand[0]) === result)) { //NEED TO CHECK THIS
+        displayOperation.textContent = "";
+        operand[0] = "";
+    };
+
     operand[operandToModify] = operand[operandToModify].slice(0, operand[operandToModify].length - 1)
     displayOperand.textContent = operand[operandToModify];
-    console.log(operand);
 };
 
 function clearNumber() {
@@ -181,7 +208,6 @@ function clearNumber() {
     operandToModify = 0;
     displayOperand.textContent = "";
     displayOperation.textContent = "";
-    console.log(operand);
 };
 
 // ************************
