@@ -95,8 +95,19 @@ button {
     flex: 1;
     background-color: #D3E0EA;
     color: #276678;
-    border: solid 1px #276678;
+    border: solid 2px #276678;
     box-shadow: 3px 3px #276678;
+}
+
+.operator {
+    background-color: #1687A7;
+    color: #D3E0EA;
+    font-weight: 700;
+}
+
+.operator:hover {
+    background-color: #D3E0EA;
+    color: #146356;
 }
 
 button:hover {
@@ -107,6 +118,7 @@ button:hover {
 #equal {
     background-color: #A3DA8D;
     color: #276678;
+    font-weight: 700;
 }
 
 #equal:hover {
@@ -116,7 +128,11 @@ button:hover {
 
 .clear,
 .backspace {
+    flex: 1.5;
     background-color: #FF6767;
+    border-left: solid 4px #276678;
+    font-weight: 700;
+    font-size: 18px;
 }
 
 .clear:hover,
