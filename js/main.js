@@ -1,10 +1,4 @@
-const buttonNumbers = document.querySelectorAll(".number");
-const buttonOperator = document.querySelectorAll(".operator");
-const buttonPoint = document.querySelector(".point");
-const buttonPlusMinus = document.querySelector(".plus-minus");
-const buttonEqual = document.querySelector(".equal");
-const buttonBackspace = document.querySelector(".backspace");
-const buttonClear = document.querySelector(".clear")
+const buttons = document.querySelectorAll("button");
 const displayOperation = document.querySelector(".d-operation");
 const displayOperand = document.querySelector(".d-operand");
 
@@ -12,7 +6,6 @@ let operandToModify = 0; // Variable to define if it's the first operand or the 
 let operand = ["", ""]; // Variable to store the two operands
 let operator = ""; // Variable to store the choosen operator
 let result = undefined;
-// let displayResult = "";
 
 // ************************
 // MATH OPERATION
@@ -39,40 +32,38 @@ function subtract(foperand) {
 // ************************
 
 function roundNumber(n) {
-    let numberRounded = "";
     let nToString = String(n);
 
-    console.log(n)
-
-    if (n >= 1e+21) return String(n);
+    if (nToString.length <= 11) return nToString;
+    if (n >= 1e+21 || n <= -1e+21) return nToString;
     if (n >= 1000000000) return `${Math.round((n/10**(nToString.length-1)) * 100) / 100}e${nToString.length-1}`;
     if (n <= -1000000000) return `${Math.round((n/10**(nToString.length-1)) * 100) / 100}e${nToString.length-1}`;
     if (n <= 0.000001) return `${Math.round(n * 10 ** Number(nToString.split("-")[1]) * 100) / 100}e-${nToString.split("-")[1]}`;
-    if ((nToString.length > 3) && nToString.includes(".")) return Math.round(n * 100000) / 100000;
-    numberRounded = String(n);
+    if ((nToString.length > 3) && nToString.includes(".") && n > 1) return Math.round(n * 100) / 100;
+    if (nToString.length > 3 && nToString.includes(".") && n < 1 && n > 0) return Math.round(n * 100000) / 100000;
 
-    return numberRounded;
+    return nToString;
 };
 
 // ************************
 // OPERATION
 // ************************
 
-function opeOperate(e) {
+function opeOperate(foperator) {
 
     // Exceptions
     if (operand[0] === "") return; // If user press an operator and the first operand is empty, input is ignored
 
     // If user press an operator and the second operand is empty... 
     if (operand[1] === "") {
-        operator = this.id; // ...store the operator 
+        operator = foperator; // ...store the operator 
         operandToModify = 1; // ...change the operand to modify
         displayOperation.textContent = `${roundNumber(Number(operand[0]))} ${operator}`; // Display the first number and operator on the top screen
         displayOperand.textContent = ""; // Clear bottom screen
         return
     };
 
-    if (operator === "%") {
+    if (operator === "/") {
         if (Number(operand[1]) === 0) {
             displayOperation.textContent = "";
             displayOperand.textContent = "Div 0 - undefined";
@@ -83,7 +74,7 @@ function opeOperate(e) {
         };
         result = divide(operand);
     };
-    if (operator === "x") {
+    if (operator === "*") {
         result = multiply(operand);
     };
     if (operator === "+") {
@@ -93,24 +84,21 @@ function opeOperate(e) {
         result = subtract(operand);
     };
 
-    console.log(result);
-    console.log(typeof(result));
-
     operand[0] = String(result);
     operand[1] = "";
     operandToModify = 1; // ...change the operand to modify
-    operator = this.id; // ...store the operator 
+    operator = foperator; // ...store the operator 
 
     displayOperation.textContent = `${roundNumber(result)} ${operator}`; // Display the first number and operator on the top screen
     displayOperand.textContent = `${roundNumber(result)}`; // Display the first number and operator on the top screen
 };
 
-function equOperate(e) {
+function equOperate() {
 
     // Exceptions
     if (operand[0] === "" || operand[1] === "" || operator === "") return;
 
-    if (operator === "%") {
+    if (operator === "/") {
         if (Number(operand[1]) === 0) {
             displayOperation.textContent = "";
             displayOperand.textContent = "Div 0 - undefined";
@@ -121,7 +109,7 @@ function equOperate(e) {
         };
         result = divide(operand);
     };
-    if (operator === "x") {
+    if (operator === "*") {
         result = multiply(operand);
     };
     if (operator === "+") {
@@ -143,7 +131,7 @@ function equOperate(e) {
 // OPERAND MODIFICATION
 // ************************
 
-function modifyOperandNumber(e) {
+function modifyOperandNumber(num) {
     //Function to modify the operand when the user click on a number
 
     if ((operandToModify === 0) && (Number(operand[0]) === result)) {
@@ -152,17 +140,21 @@ function modifyOperandNumber(e) {
     };
 
     // Exceptions
-    //if (((operand[operandToModify]) === "") && (this.id === "0")) return; // If user press "0" and operand is empty, input is ignored
     if (operand[operandToModify].length > 20) return; // If the length is > 14, ignore the input (operator too big)
 
-    operand[operandToModify] += this.id; // Add the number to the operation variable at the position 1(first operand) or 2 second operand)
+    operand[operandToModify] += num // Add the number to the operation variable at the position 1(first operand) or 2 second operand)
     displayOperand.textContent = operand[operandToModify]; // Disply the number on the screen
 };
 
 function modifyOperandPoint() {
     // Function to add "." to the number
 
-    // Exceptions
+    //If the result of the revious calculation is displayed...
+    //...we first clear it before to apply "."
+    if ((operandToModify === 0) && (Number(operand[0]) === result)) {
+        displayOperation.textContent = "";
+        operand[0] = "";
+    };
     if (operand[operandToModify].includes(".")) return; // If the operand already contain ".", input is ignored
 
     operand[operandToModify] += ".";
@@ -185,6 +177,13 @@ function modifyOperandSymbole() {
 function removeLastEntry() {
     // Function to remove the last entry
 
+    //If the result of the revious calculation is displayed...
+    //...we clear
+    if ((operandToModify === 0) && (Number(operand[0]) === result)) { //NEED TO CHECK THIS
+        displayOperation.textContent = "";
+        operand[0] = "";
+    };
+
     if (operandToModify === 1 && operand[operandToModify] === "") {
         operator = "";
         operandToModify = 0;
@@ -193,17 +192,12 @@ function removeLastEntry() {
         return;
     };
 
-    if ((operandToModify === 0) && (Number(operand[0]) === result)) { //NEED TO CHECK THIS
-        displayOperation.textContent = "";
-        operand[0] = "";
-    };
-
     operand[operandToModify] = operand[operandToModify].slice(0, operand[operandToModify].length - 1)
     displayOperand.textContent = operand[operandToModify];
 };
 
 function clearNumber() {
-    // Clear all entries
+    // Clear operands and operator
     operand = ["", ""];
     operandToModify = 0;
     displayOperand.textContent = "";
@@ -211,13 +205,33 @@ function clearNumber() {
 };
 
 // ************************
-// BUTTON EVENT LISTENER
+// CHECK EVENT
 // ************************
 
-buttonNumbers.forEach(button => button.addEventListener("click", modifyOperandNumber));
-buttonPoint.addEventListener("click", modifyOperandPoint);
-buttonPlusMinus.addEventListener("click", modifyOperandSymbole);
-buttonOperator.forEach(button => button.addEventListener("click", opeOperate));
-buttonEqual.addEventListener("click", equOperate);
-buttonBackspace.addEventListener("click", removeLastEntry);
-buttonClear.addEventListener("click", clearNumber);
+function checkEvent(e) {
+    if (e.pointerId === -1) return; // Avoid that a button is "clicked" by pressing enter
+
+    // Check if the event is a button click or a keydown
+    if (e.type === "click" && this.className === "number") modifyOperandNumber(this.id);
+    if (e.type === "click" && this.className === "point") modifyOperandPoint();
+    if (e.type === "click" && this.className === "plus-minus") modifyOperandSymbole();
+    if (e.type === "click" && this.className === "operator") opeOperate(this.id);
+    if (e.type === "click" && this.className === "equal") equOperate();
+    if (e.type === "click" && this.className === "backspace") removeLastEntry();
+    if (e.type === "click" && this.className === "clear") clearNumber();
+    if (e.type === "keydown" && (Number(e.key) >= 0 && Number(e.key) <= 9)) modifyOperandNumber(e.key);
+    if (e.type === "keydown" && e.key === ".") modifyOperandPoint();
+    if (e.type === "keydown" && e.key === "Enter") equOperate();
+    if (e.type === "keydown" && e.key === "Backspace") removeLastEntry();
+    if (e.type === "keydown" && e.key === "/") opeOperate("/");
+    if (e.type === "keydown" && e.key === "*") opeOperate("*");
+    if (e.type === "keydown" && e.key === "-") opeOperate("-");
+    if (e.type === "keydown" && e.key === "+") opeOperate("+");
+}
+
+// ************************
+// EVENT LISTENER
+// ************************
+
+buttons.forEach(button => button.addEventListener("click", checkEvent));
+window.addEventListener('keydown', checkEvent);
