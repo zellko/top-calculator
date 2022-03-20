@@ -53,7 +53,8 @@ function operate() {
 function useOperator(foperator) {
 
     // Exceptions
-    if (operand[0] === "" || operand[0] === "-" || operand[1] === "-") return; // If user press an operator and the operand is empty or "-", input is ignored
+    //if (operand[0] === "" || operand[0] === "-" || operand[1] === "-") return; // If user press an operator and the operand is empty or "-", input is ignored
+    if (operand[0] === "" || operand[0] === "-" || operand[0] === "-." || operand[0] === "." || operand[1] === "-" || operand[1] === "." || operand[1] === "-.") return;
 
     // If user press an operator and the second operand is empty... 
     if (operand[1] === "") {
@@ -78,7 +79,7 @@ function useOperator(foperator) {
 function useEqual() {
 
     // Exceptions
-    if (operand[0] === "" || operand[1] === "" || operand[1] === "-" || operator === "") return;
+    if (operand[0] === "" || operand[1] === "" || operand[0] === "-" || operand[1] === "-" || operand[0] === "." || operand[1] === "." || operand[0] === "-." || operand[1] === "-." || operator === "") return;
 
     result = operate();
 
