@@ -14,13 +14,16 @@ let result = undefined;
 function roundNumber(n) {
     let nToString = String(n);
 
-    if (nToString.length <= 11) return nToString;
-    if (n >= 1e+21 || n <= -1e+21) return nToString;
-    if (n >= 1000000000) return `${Math.round((n/10**(nToString.length-1)) * 100) / 100}e${nToString.length-1}`;
-    if (n <= -1000000000) return `${Math.round((n/10**(nToString.length-1)) * 100) / 100}e${nToString.length-1}`;
-    if (n <= 0.000001 && n > 0) return `${Math.round(n * 10 ** Number(nToString.split("-")[1]) * 100) / 100}e-${nToString.split("-")[1]}`;
-    if ((nToString.length > 3) && nToString.includes(".") && (n > 1 || n < -1)) return Math.round(n * 100) / 100;
-    if (nToString.length > 3 && nToString.includes(".") && n < 1 && n > 0) return Math.round(n * 100000) / 100000;
+    if (n > 1000000) return String(Number.parseFloat(n).toExponential(2));
+    if (n < -1000000) return String(Number.parseFloat(n).toExponential(2));
+
+    if ((nToString.length > 3) && nToString.includes(".") && (n > 1 || n < -1)) return String(Math.round(n * 100) / 100);
+
+    if (nToString.length > 3 && nToString.includes(".") && (n > 0 && n < 1 && n > 0.000001)) return String(Math.round(n * 1000000) / 1000000);
+    if (nToString.length > 3 && nToString.includes(".") && (n > 0 && n < 1 && n <= 0.000001)) return String(Number.parseFloat(n).toExponential(2));
+
+    if (nToString.length > 3 && nToString.includes(".") && (n < 0 && n > -1 && n < -0.000001)) return String(Math.round(n * 1000000) / 1000000);
+    if (nToString.length > 3 && nToString.includes(".") && (n < 0 && n > -1 && n >= -0.000001)) return String(Number.parseFloat(n).toExponential(2));
 
     return nToString;
 };
