@@ -2,10 +2,12 @@ const buttons = document.querySelectorAll("button");
 const displayOperation = document.querySelector(".d-operation");
 const displayOperand = document.querySelector(".d-operand");
 
+const symboleArray = [".", "-", "-."]
 let operandToModify = 0; // Variable to define if it's the first operand or the seconde operand to modify when the user is typing chiffe
 let operand = ["", ""]; // Variable to store the two operands
 let operator = ""; // Variable to store the choosen operator
 let result = undefined;
+
 
 // ************************
 // NUMBER ROUNDING
@@ -40,7 +42,7 @@ function operate() {
             operandToModify = 0;
             operand[0] = "";
             operand[1] = "";
-            return;
+            return "Div0";
         };
         return Number(operand[0]) / Number(operand[1]);
     };
@@ -53,8 +55,7 @@ function operate() {
 function useOperator(foperator) {
 
     // Exceptions
-    //if (operand[0] === "" || operand[0] === "-" || operand[1] === "-") return; // If user press an operator and the operand is empty or "-", input is ignored
-    if (operand[0] === "" || operand[0] === "-" || operand[0] === "-." || operand[0] === "." || operand[1] === "-" || operand[1] === "." || operand[1] === "-.") return;
+    if (operand[0] === "" || symboleArray.includes(operand[0]) || symboleArray.includes(operand[1])) return;
 
     // If user press an operator and the second operand is empty... 
     if (operand[1] === "") {
@@ -66,6 +67,7 @@ function useOperator(foperator) {
     };
 
     result = operate();
+    if (result === "Div0") return;
 
     operand[0] = String(result);
     operand[1] = "";
@@ -79,9 +81,10 @@ function useOperator(foperator) {
 function useEqual() {
 
     // Exceptions
-    if (operand[0] === "" || operand[1] === "" || operand[0] === "-" || operand[1] === "-" || operand[0] === "." || operand[1] === "." || operand[0] === "-." || operand[1] === "-." || operator === "") return;
+    if (operand[0] === "" || operand[1] === "" || symboleArray.includes(operand[0]) || symboleArray.includes(operand[1])) return;
 
     result = operate();
+    if (result === "Div0") return;
 
     displayOperation.textContent = `${roundNumber(Number(operand[0]))} ${operator} ${roundNumber(Number(operand[1]))} =`; // Display the first number and operator on the top screen
     displayOperand.textContent = `${roundNumber(result)}`; // Display the first number and operator on the top screen
