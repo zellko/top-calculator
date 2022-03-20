@@ -9,7 +9,7 @@ Bug:
 - /
 
 ToDo:
-- /
+- Check if the operand are valid in a better way (e.g. check if it includes a number) instead of using OR.
 ___
 
 Color Palette:
