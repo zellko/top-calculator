@@ -6,13 +6,10 @@ This is my go of the project "Project: Calculator" from Foundations parts of The
 ___
 
 Bug: 
-- +/- and "operator" is accepted. Need to add an exceptions
+- /
 
 ToDo:
-- Add comments and refactor
-- Check for big number
-- Merge equOperator and opeOperator functions ?
-- User numpad + and - to add sign if the operand is empty
+- /
 ___
 
 Color Palette:
